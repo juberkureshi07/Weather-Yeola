@@ -1,0 +1,26 @@
+name: Yeola Weather Update
+
+on:
+  schedule:
+    - cron: "0 */3 * * *" 
+  workflow_dispatch:
+
+jobs:
+  update-weather:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Fetch Weather
+      run: |
+        curl -s "https://wttr.in/Yeola,+Maharashtra?format=3" > weather.txt
+        echo "Updated: $(date)" >> weather.txt
+
+    - name: Commit changes
+      run: |
+        git config --local user.email "juberkureshi07@users.noreply.github.com"
+        git config --local user.name "juberkureshi07"
+        git add weather.txt
+        git diff --cached --quiet && echo "No changes to commit" || git commit -m "Yeola weather update 🌦️"
+        git push
